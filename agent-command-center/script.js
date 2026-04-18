@@ -295,7 +295,36 @@ let isContinuousListening = false;
 let currentController     = null;
 let commandHistory        = [];
 let historyIndex          = -1;
-let conversationHistory   = [];
+let conversationHistory   = [];   // runtime cache; backed by DB + localStorage
+
+// ---- MEMORY PERSISTENCE ----
+function saveHistoryLocal() {
+    try {
+        const trimmed = conversationHistory.slice(-50);
+        localStorage.setItem('jarvis_history', JSON.stringify(trimmed));
+    } catch {}
+}
+
+async function loadHistory() {
+    try {
+        const res  = await fetch('/history', { signal: AbortSignal.timeout(3000) });
+        const data = await res.json();
+        if (data.history?.length) {
+            conversationHistory = data.history;
+            addLog(`Memory restored — ${data.history.length} previous exchange${data.history.length > 1 ? 's' : ''} loaded.`, 'system');
+            return;
+        }
+    } catch {}
+    // fallback: localStorage
+    try {
+        const saved = localStorage.getItem('jarvis_history');
+        if (saved) {
+            conversationHistory = JSON.parse(saved);
+            if (conversationHistory.length)
+                addLog(`Local memory restored — ${conversationHistory.length} exchange${conversationHistory.length > 1 ? 's' : ''}.`, 'system');
+        }
+    } catch {}
+}
 
 // ---- ORB LABEL ----
 function setOrbLabel(state, text) {
@@ -549,7 +578,8 @@ async function executeTask() {
         if (data.message) {
             await typeLog(data.message, 'ai');
             conversationHistory.push({ user: prompt, assistant: data.message });
-            if (conversationHistory.length > 12) conversationHistory.shift();
+            if (conversationHistory.length > 50) conversationHistory.shift();
+            saveHistoryLocal();
         }
 
         if (data.results?.length) {
@@ -563,6 +593,13 @@ async function executeTask() {
                     if (r.stderr) addLog(r.stderr, 'error');
                 }
             }
+        }
+
+        if (data.action_result) {
+            const ar = data.action_result;
+            const icon = ar.status === 'sent' || ar.status === 'ok' ? '✓' : '✗';
+            const type = ar.status === 'failed' ? 'error' : 'success';
+            addLog(`${icon} ${ar.label}: ${ar.detail}`, type);
         }
 
     } catch (err) {
@@ -579,7 +616,9 @@ async function executeTask() {
 function clearLog() {
     log.innerHTML = '';
     conversationHistory = [];
-    addLog('Terminal cleared.', 'system');
+    localStorage.removeItem('jarvis_history');
+    fetch('/history', { method: 'DELETE' }).catch(() => {});
+    addLog('Memory cleared. Fresh start.', 'system');
 }
 
 // ---- EVENTS ----
@@ -633,3 +672,4 @@ if (recognition) {
 // ---- INIT ----
 checkHealth();
 setInterval(checkHealth, 30000);
+loadHistory();
