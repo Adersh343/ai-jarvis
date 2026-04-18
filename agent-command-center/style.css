@@ -1,0 +1,182 @@
+:root {
+    --bg: #050505;
+    --card-bg: rgba(15, 15, 15, 0.8);
+    --border: rgba(255, 255, 255, 0.1);
+    --accent: #00ffaa;
+    --accent-glow: rgba(0, 255, 170, 0.3);
+    --text: #e0e0e0;
+    --text-dim: #808080;
+    --error: #ff4444;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.glow-bg {
+    position: fixed;
+    top: -20%;
+    left: -20%;
+    width: 140%;
+    height: 140%;
+    background: radial-gradient(circle at center, rgba(0, 255, 170, 0.05) 0%, transparent 50%);
+    z-index: -1;
+    animation: drift 10s infinite alternate;
+}
+
+@keyframes drift {
+    from { transform: translate(-50px, -50px); }
+    to { transform: translate(50px, 50px); }
+}
+
+.container {
+    width: 100%;
+    max-width: 900px;
+    padding: 40px;
+    z-index: 1;
+}
+
+.app-header {
+    margin-bottom: 30px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.pulse {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.status-text {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    font-weight: 600;
+}
+
+h1 { font-size: 32px; font-weight: 600; margin-bottom: 4px; }
+.app-header p { color: var(--text-dim); font-size: 14px; }
+
+/* Terminal Styles */
+.terminal-wrapper {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.terminal-header {
+    background: rgba(255,255,255,0.05);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.dots { display: flex; gap: 6px; }
+.dots span { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+.dots span:nth-child(1) { background: #ff5f56; }
+.dots span:nth-child(2) { background: #ffbd2e; }
+.dots span:nth-child(3) { background: #27c93f; }
+
+.title { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); }
+
+.output-log {
+    height: 400px;
+    padding: 20px;
+    overflow-y: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.log-entry { margin-bottom: 10px; }
+.log-entry.system { color: var(--text-dim); font-style: italic; }
+.log-entry.user { color: var(--accent); }
+.log-entry.command { color: #88ccff; }
+.log-entry.error { color: var(--error); }
+.log-entry.success { color: var(--accent); opacity: 0.8; }
+
+.input-area {
+    padding: 20px;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-top: 1px solid var(--border);
+}
+
+.prompt { color: var(--accent); font-weight: bold; }
+
+input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    outline: none;
+}
+
+button {
+    background: var(--accent);
+    color: black;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.app-footer {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.info-tag {
+    font-size: 10px;
+    background: var(--border);
+    padding: 4px 10px;
+    border-radius: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
