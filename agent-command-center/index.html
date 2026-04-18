@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Command Center | Active</title>
+    <title>Agent Command Center | Voice Mode</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Outfit:wght@400;600&display=swap" rel="stylesheet">
 </head>
@@ -17,26 +17,37 @@
                 <span class="status-text">AGENT ONLINE</span>
             </div>
             <h1>Command Center</h1>
-            <p>Direct system orchestration via Ollama Llama3</p>
+            <p>Direct system orchestration via Ollama Llama3.2</p>
         </header>
 
         <main class="terminal-wrapper">
+            <!-- 3D Voice Overlay (Hidden by default) -->
+            <div id="voiceOverlay" class="voice-overlay">
+                <div class="orb-container">
+                    <div class="orb-3d">
+                        <div class="orb-shine"></div>
+                    </div>
+                    <p>Listening to your command...</p>
+                </div>
+            </div>
+
             <div class="terminal-header">
                 <div class="dots"><span></span><span></span><span></span></div>
                 <div class="title">System Terminal</div>
             </div>
             <div id="outputLog" class="output-log">
-                <div class="log-entry system">System initialized. Ready for commands.</div>
+                <div class="log-entry system">System initialized. Voice mode ready.</div>
             </div>
             <div class="input-area">
+                <button id="micBtn" class="mic-btn">🎤</button>
                 <span class="prompt">❯</span>
-                <input type="text" id="promptInput" placeholder="Describe the task (e.g., 'Create a web folder and add a login file')" autofocus>
+                <input type="text" id="promptInput" placeholder="Speak or type a command..." autofocus>
                 <button id="sendBtn">Execute</button>
             </div>
         </main>
 
         <footer class="app-footer">
-            <div class="info-tag">Local Model: Llama3</div>
+            <div class="info-tag">Local Model: Llama3.2</div>
             <div class="info-tag">Target: macOS Terminal</div>
         </footer>
     </div>
